@@ -4,11 +4,12 @@ import Qt.labs.presentation 1.0
 Presentation {
     id: presentation
 
+    property bool delayPoints: true
     property real fontScale: 0.7
 
     Image {
         anchors.fill: parent
-        source: "background.png"
+        source: "qt-1.png"
     }
 
     FontLoader {
@@ -24,42 +25,100 @@ Presentation {
     fontFamily: titilium.name
     codeFontFamily: titiliumLight.name
 
-    SlideCounter {}
+    SlideCounter {
+        anchors.right: undefined
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
     Clock {}
 
     Slide {
         centeredText: "<h1>Introducción a Qt</h1><br>" +
-                      "por Jesús Fernández (<a href=\"mailto:jesus.fernandez@qt.io\">jesus.fernandez@qt.io</a>)"
+                      "Jesús Fernández (<a href=\"mailto:jesus.fernandez@qt.io\">jesus.fernandez@qt.io</a>)"
     }
 
     Slide {
+        id: whoami
         title: "¿Quién soy?"
-        fontScale: parent.fontScale
+        delayPoints: presentation.delayPoints
+        Rectangle {
+            anchors.fill: parent
+            Image {
+                id: whoamiImage
+                anchors.fill: parent
+                fillMode: Image.PreserveAspectFit
+                source: whoami.content[whoami._pointCounter] ? whoami.content[whoami._pointCounter] : ""
+            }
+        }
 
         content: [
-            "Panda Security",
-            "Hewlett-Packard",
-            "Gameloft",
-            "The Qt Company",
-            " Mantenedor de QtNetworkAuth",
-            " Mantenedor de QtWebGLStreaming Plugin"
+            "gijon.jpg",
+            "spectrum.jpg",
+            "virus.jpg",
+            "printer.jpg",
+            "asphalt.jpg",
+            "tqtc.jpg"
         ]
     }
 
     Slide {
-        title: "¿Quién es The Qt Company?"
-        fontScale: parent.fontScale
-
+        title: "¿Qué es Qt?"
+        delayPoints: presentation.delayPoints
         content: [
-            "Mayor contribuidor al proyecto Qt",
-            "Nos encargamos del mantenimiento de servidores",
-            "Organizamos la comunidad",
-            "Oficinas en todo el mundo"
+            "Framework C++",
+            "Multiplataforma",
+            "Bindings a otros lenguajes",
+            "Open source",
         ]
     }
 
     Slide {
-        title: "¿Quién es The Qt Company? (2)"
+        id: storySlide
+        title: "Historia de Qt: " + content[_pointCounter]
+        delayPoints: presentation.delayPoints
+
+        Rectangle {
+            anchors.fill: parent
+            Image {
+                id: storyImage
+                anchors.fill: parent
+                fillMode: Image.PreserveAspectFit
+
+                states: [
+                    State {
+                        when: storySlide.content[storySlide._pointCounter] === "Quasar Toolkit"
+                        PropertyChanges { target: storyImage; source: "ParkBench.jpg" }
+                    },
+                    State {
+                        when: storySlide.content[storySlide._pointCounter] === "Trolltech"
+                        PropertyChanges { target: storyImage; source: "trolltech.png" }
+                    },
+                    State {
+                        when: storySlide.content[storySlide._pointCounter] === "Nokia"
+                        PropertyChanges { target: storyImage; source: "qt-nokia.png" }
+                    },
+                    State {
+                        when: storySlide.content[storySlide._pointCounter] === "Digia"
+                        PropertyChanges { target: storyImage; source: "digia-qt.png" }
+                    },
+                    State {
+                        when: storySlide.content[storySlide._pointCounter] === "The Qt Company"
+                        PropertyChanges { target: storyImage; source: "qt-logo.png" }
+                    }
+                ]
+            }
+        }
+
+        content: [
+            "Quasar Toolkit",
+            "Trolltech",
+            "Nokia",
+            "Digia",
+            "The Qt Company"
+        ]
+    }
+
+    Slide {
+        title: "The Qt Project"
         fontScale: parent.fontScale
 
         Image {
@@ -69,278 +128,279 @@ Presentation {
     }
 
     Slide {
-        title: "Qué es Qt?"
-        delayPoints: true
+        title: "¿Qué puedo hacer con Qt?"
         fontScale: parent.fontScale
 
         content: [
-            "Código abierto",
-            "Framework C++",
-            "Multiplataforma",
-            "¿Qué puedo hacer con Qt?",
-            " GUIs (QtWidgets, QtQuick, Qt3DStudio)",
-            " Aplicaciones de consola (QtCore)",
-            " Aplicaciones de servidor (QtNetwork, QtWebsockets)",
-            " Juegos (QtOpenGL, Qt3D, QtGamepad)",
-            " Entornos gráficos*",
-            " ..."
+            "GUIs (QtWidgets, QtQuick, Qt3DStudio)",
+            "Aplicaciones de consola (QtCore)",
+            "Servidores (QtNetwork, QtWebsockets)",
+            "Juegos y herramientas de visualización (QtOpenGL, Qt3D, QtGamepad)",
+            "Entornos de usuario (*)",
+            "...",
+            "Multiplataforma (Qt Platform Abstraction)",
+        ]
+    }
+
+    Slide {
+        title: "Plataformas soportadas"
+        content: [
+            "Escritorio:",
+            " Windows",
+            " OS X",
+            " Linux",
+            "Móviles:",
+            " Android",
+            " iOS & WatchOS",
+            " WinRT",
+            " Dispositivos empotrados:",
+            " Raspberry Pi 0, 1, 2, 3",
+            " Nvidia Tegra",
+            "... (qt5/qtbase/mkspecs)",
         ]
     }
 
     Slide {
         title: "¿Quién usa Qt?"
 
-        Image {
-            anchors.centerIn: parent
-            source: "google-earth.jpg"
-            width: parent.width
-            height: parent.height
-            fillMode: Image.PreserveAspectFit
+        Component {
+            id: delegate
+            Image {
+                id: wrapper
+                width: pathView.width; height: pathView.height
+                source: icon
+            }
+        }
 
-            Timer {
-                id: timer
-                property int current: 0
-                running: currentSlide === 5
-                interval: 1000
-                repeat: true
-                onTriggered: {
-                    var images = [
-                                "google-earth.jpg",
-                                "maya.jpg",
-                                "lg.jpg",
-                                "rimac.png",
-                                "battlenet.png",
-                                "KDE.png",
-                                "lxqt.jpg",
-                                "mathematica.png",
-                                "crytek.jpg",
-                                "asphalt8.jpg",
-                                "hp.jpg",
-                                "sky.png",
-                                "tableau.png",
-                                "dcc.png",
-                                "autoio.jpg",
-                                "navico.jpg",
-                                "Orcamp.jpg",
-                                "Imaginando.jpg"
-                            ]
-                    current = (current + 1) % images.length
-                    console.log(current)
-                    parent.source = images[current]
-                }
+        LaunchScreen {
+            clip: true
+            anchors.fill: parent
+            model: ListModel {
+                ListElement { icon: "google-earth.jpg" }
+                ListElement { icon: "maya.jpg" }
+                ListElement { icon: "lg.jpg" }
+                ListElement { icon: "rimac.png" }
+                ListElement { icon: "battlenet.png" }
+                ListElement { icon: "KDE.png" }
+                ListElement { icon: "lxqt.jpg" }
+                ListElement { icon: "mathematica.png" }
+                ListElement { icon: "crytek.jpg" }
+                ListElement { icon: "asphalt.jpg" }
+                ListElement { icon: "hp.jpg" }
+                ListElement { icon: "sky.png" }
+                ListElement { icon: "tableau.png" }
+                ListElement { icon: "dcc.png" }
+                ListElement { icon: "autoio.jpg" }
+                ListElement { icon: "navico.jpg" }
+                ListElement { icon: "Orcamp.jpg" }
+                ListElement { icon: "Imaginando.jpg" }
             }
         }
     }
 
     Slide {
-        title: "Build System"
-        delayPoints: true
-        fontScale: parent.fontScale
-
+        title: "¿Qué me ofrece Qt como desarrollador?"
+        delayPoints: presentation.delayPoints
         content: [
-            "QMake",
-            "QBS",
-            " Basado en QML",
-            "CMake"
+            "Buena documentación",
+            "Sencillez",
+            "Resultados rápidos",
+            "Robustez",
+            "Ejecutar el mismo código en diferentes plataformas",
+            "Aplicaciones asíncronas"
         ]
+        Image {
+            source: "cpp.png"
+            anchors { top: parent.top; right: parent.right; bottom: parent.bottom }
+            fillMode: Image.PreserveAspectFit
+            z: -1
+        }
     }
 
-    CodeSlide {
-        title: "QCoreApplication/QGuiApplication/QApplication"
-        fontScale: parent.fontScale
-        code: "#include <QApplication>
-
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    // ...
-    return a.exec();
-}"
+    Slide  {
+        title: "QtCreator"
+        Image {
+            anchors.fill: parent
+            fillMode: Image.PreserveAspectFit
+            source: "qtcreator.png"
+        }
     }
-
+    
     Slide {
         title: "QObject"
-        fontScale: parent.fontScale
-        delayPoints: true
+        delayPoints: presentation.delayPoints
+
+        Image {
+            source: "qobject.jpg"
+            anchors { top: parent.top; right: parent.right; bottom: parent.bottom }
+            fillMode: Image.PreserveAspectFit
+            z: -1
+        }
 
         content: [
-            "Tipo principal de todas las clases de Qt",
-            "Manejo de memoria",
-            "Reflection (moc)",
-            "Soporte de señales y slots*",
-            "Puede vivir en un hilo"
-        ]
-    }
-
-    Slide {
-        title: "Qt Widgets"
-        fontScale: parent.fontScale
-        delayPoints: true
-
-        content: [
-            "Clase base QWidget",
-            "Estándar para crear interfaces en Qt",
-            "Usa QPainter para \"pintar\" las UIs",
-            " Modo imperativo",
-            " Usa principalmente la CPU -> No aprovecha por completo la acceleración gráfica por " +
-                "hardware",
-            "Qt Designer + QtCreator",
-            "Usa el patrón Modelo-Vista-Controlador",
-            "Muy estable",
-            "Muy usado actualmente"
-        ]
-    }
-
-    Slide {
-        title: "Qt Quick"
-        fontScale: parent.fontScale
-        delayPoints: true
-
-        content: [
-            "Basado en QML",
-            " Lenguaje declarativo",
-            " Compatible con Javascript",
-            "Pensado para interfaces de control táctil",
-            "Aprovecha la acceleración gráfica por hardware (GPU)",
-            "En continua evolución",
-            "Qt Quick Designer",
-            "Qt Quick Controls 2"
+            "Son únicos ➜ No se pueden copiar",
+            "Forman parte de la jerarquía de objetos",
+            "Se pueden conectar entre ellos (signals y slots)",
+            "Pueden vivir en un hilo",
+            "Pueden tener funciones invocables",
+            "No es una clase abstracta",
         ]
     }
 
     CodeSlide {
-        title: "Ejemplo de archivo QML"
-        fontScale: parent.fontScale
-        code: "import QtQuick 2.0
+        title: "Signals y slots"
 
-Item {
-    id : clock
-    width: {
-        if (ListView.view && ListView.view.width >= 200)
-            return ListView.view.width / Math.floor(ListView.view.width / 200.0);
-        else
-            return 200;
+        code: "class ClassA : public QObject
+{
+    Q_OBJECT
+public:
+    explicit ClassA(QObject *parent = nullptr);
+signals:
+    void finished(bool error);
+public slots:
+    void start();
+    // ...
+};"
     }
 
-    height: {
-        if (ListView.view && ListView.view.height >= 240)
-            return ListView.view.height;
-        else
-            return 240;
+    Slide {
+        title: "MOC (MetaObject Compiler)"
+        Image {
+            source: "uglyduckling.jpg"
+            anchors { top: parent.top; right: parent.right; bottom: parent.bottom }
+            fillMode: Image.PreserveAspectFit
+            z: -1
+        }
+
+        delayPoints: presentation.delayPoints
+        content: [
+            "No necesita RTTI",
+            "Require Q_OBJECT",
+            "Genera metainformación de las clases (meta-object)",
+            " Nombre de la clase y los elementos",
+            " Muestra información de la herencia",
+            " Traducción - QObject::tr",
+            " Acceso a las Q_PROPERTY de la clase"
+        ]
     }
 
-    property alias city: cityLabel.text
-    property int hours
-    property int minutes
-    property int seconds
-    property real shift
-    property bool night: false
-    property bool internationalTime: true //Unset for local time
-
-    function timeChanged() {
-        var date = new Date;
-        hours = internationalTime ? date.getUTCHours() + Math.floor(clock.shift) : date.getHours()
-        night = ( hours < 7 || hours > 19 )
-        minutes = internationalTime ? date.getUTCMinutes() + ((clock.shift % 1) * 60) : date.getMinutes()
-        seconds = date.getUTCSeconds();
-    }
-
-    Timer {
-        interval: 100; running: true; repeat: true;
-        onTriggered: clock.timeChanged()
-    }
-
-    Item {
-        anchors.centerIn: parent
-        width: 200; height: 240
-
-        Image { id: background; source: \"clock.png\"; visible: clock.night == false }
-        Image { source: \"clock-night.png\"; visible: clock.night == true }
-
-        Image {
-            x: 92.5; y: 27
-            source: \"hour.png\"
-            transform: Rotation {
-                id: hourRotation
-                origin.x: 7.5; origin.y: 73;
-                angle: (clock.hours * 30) + (clock.minutes * 0.5)
-                Behavior on angle {
-                    SpringAnimation { spring: 2; damping: 0.2; modulus: 360 }
-                }
-            }
-        }
-
-        Image {
-            x: 93.5; y: 17
-            source: \"minute.png\"
-            transform: Rotation {
-                id: minuteRotation
-                origin.x: 6.5; origin.y: 83;
-                angle: clock.minutes * 6
-                Behavior on angle {
-                    SpringAnimation { spring: 2; damping: 0.2; modulus: 360 }
-                }
-            }
-        }
-
-        Image {
-            x: 97.5; y: 20
-            source: \"second.png\"
-            transform: Rotation {
-                id: secondRotation
-                origin.x: 2.5; origin.y: 80;
-                angle: clock.seconds * 6
-                Behavior on angle {
-                    SpringAnimation { spring: 2; damping: 0.2; modulus: 360 }
-                }
-            }
-        }
-
-        Image {
-            anchors.centerIn: background; source: \"center.png\"
-        }
-
+    Slide {
+        title: "MOC (MetaObject Compiler) - 2"
         Text {
-            id: cityLabel
-            y: 210; anchors.horizontalCenter: parent.horizontalCenter
-            color: \"white\"
-            font.family: \"Helvetica\"
-            font.bold: true; font.pixelSize: 16
-            style: Text.Raised; styleColor: \"black\"
+            anchors.centerIn: parent
+            text: "<a href=\"https://youtu.be/NunSS_ppDsI?t=2137\">Quizá en un futuro no sea necesario ≥ C++2x: Metaclases"
+            font.pixelSize: parent.baseFontSize
+            font.family: parent.fontFamily
+            MouseArea {
+                anchors.fill: parent
+                onClicked: Qt.openUrlExternally("https://youtu.be/NunSS_ppDsI?t=2137");
+            }
         }
+
     }
+
+    Slide {
+        title: "Signals y slots"
+
+        content: [
+            "Permiten conexiones entre QObjects",
+            "Pueden ser conectados en tiempo de ejecución",
+            "Se pueden desconectar",
+            "Permiten conexiones asíncronas",
+            "Permiten conectar diferentes hilos de una manera segura"
+        ]
+    }
+
+    CodeSlide {
+        title: "Signals y slots"
+
+        code: "int main(int argc, char **argv) {
+    QCoreApplication app(argc, argv);
+    ClassA object;
+    auto timer = new QTimer(&app);
+    QObject::connect(timer, SIGNAL(timeout()), &object, SLOT(start()));
+    QObject::connect(timer, &QTimer::timeout, timer, &QTimer::deleteLater);
+    QObject::connect(&object, &ClassA::finished, [&](bool ok) {
+        if (ok) {
+            QObject::disconnect(timer, SIGNAL(timeout()), &object, SLOT(start()));
+            QObject::metaObject()->invokeMethod(&app, \"quit\");
+        } else { timer->start(1000); }
+    });
+    timer.start(1000);
+    return app.exec();
 }"
     }
 
     Slide {
-        title: "Otras modulos importantes"
-        fontScale: parent.fontScale
-        delayPoints: true
+        title: "QtWidgets"
+        delayPoints: presentation.delayPoints
+        Image {
+            source: "widgets.png"
+            anchors { top: parent.top; right: parent.right; bottom: parent.bottom }
+            fillMode: Image.PreserveAspectFit
+            z: -1
+        }
         content: [
-            "Qt Network",
-            "Qt SQL",
-            "Qt Location",
-            "Qt Bluetooth",
-            "Qt Multimedia",
-            "..."
+            "Libreria para hacer UIs",
+            "Se basa en el concepto de layouts",
+            "Sus clases heredan de QWidget",
+            "Se pueden personalizar usando un subconjunto de CSS",
+            "Aunque antiguas no han sido abandonadas",
+            "Se pueden crear archivos .ui",
         ]
     }
 
     Slide {
-        title: "Qt 3D"
-        fontScale: parent.fontScale
-        delayPoints: true
+        title: "QtWidgets - QtDesigner"
+        Image {
+            source: "designer.png"
+            anchors.fill: parent
+            fillMode: Image.PreserveAspectFit
+        }
+    }
 
+    Slide {
+        title: "QtWidgets - MVC"
+        delayPoints: presentation.delayPoints
         content: [
-            "Motor gráfico",
-            "Paradigma basado en aspectos",
-            "Diseñado para simulaciones",
-            "APIs para C++ y Qt Quick",
-            "Qt 3D Studio"
+            "MVC: Model-View-Component",
+            "Permite separar los datos de la vista",
+            "Permite reusar modelos en diferentes vistas",
+            "Modelos: QAbstractItemModel, QAbstractProxyModel",
+            "Vista: QListView, QTableView, QTreeView (QAbstractItemView)",
+            "Controlador: QItemDelegate",
         ]
     }
 
     Slide {
-        centeredText: "<h1>¿Preguntas?</h1>"
+        title: "QtQuick"
+        delayPoints: presentation.delayPoints
+        content: [
+            "QML: Qt Markup Language",
+            "Lenguaje declarativo",
+            "Muy flexible",
+            "Interacción muy sencilla con C++",
+            "Se puede usar Javascript",
+            "QML no está limitado a interfaces de usuario"
+        ]
+    }
+
+    Slide {
+        title: "Qt Quick Designer"
+        Image {
+            anchors.fill: parent
+            fillMode: Image.PreserveAspectFit
+            source: "qtquickdesigner.png"
+        }
+    }
+
+    LiveCodeSlide {
+        title: "QML"
+    }
+
+    Slide {
+        centeredText: "<h1>¡Muchas gracias!</h1><h2>¿Preguntas?</h2>" +
+                      "<br /><a href=\"https://github.com/jsfdez/usingstdcpp2017\">"+
+                      "https://github.com/jsfdez/usingstdcpp2017</a>"
     }
 }
